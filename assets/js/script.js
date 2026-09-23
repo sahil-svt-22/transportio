@@ -1,45 +1,52 @@
 'use strict';
 
+const header = document.querySelector('[data-header]');
+const navbar = document.querySelector('[data-navbar]');
+const backdrop = document.querySelector('.mobile-backdrop');
+const navToggleButtons = document.querySelectorAll('[data-nav-toggler]');
+const backTopButton = document.querySelector('[data-back-top-btn]');
+const bookingForm = document.querySelector('#booking-form');
+const successMessage = document.querySelector('#booking-success');
 
+const closeMobileNav = () => {
+  navbar.classList.remove('active');
+  backdrop.classList.remove('active');
+};
 
-/**
- * navbar toggle
- */
+const toggleMobileNav = () => {
+  const isOpen = navbar.classList.toggle('active');
+  backdrop.classList.toggle('active', isOpen);
+};
 
-const navbar = document.querySelector("[data-navbar]");
-const navToggler = document.querySelectorAll("[data-nav-toggler]");
-const navLinks = document.querySelectorAll("[data-nav-link]");
-const overlay = document.querySelector("[data-overlay]");
+navToggleButtons.forEach((button) => {
+  button.addEventListener('click', toggleMobileNav);
+});
 
-for (let i = 0; i < navToggler.length; i++) {
-  navToggler[i].addEventListener("click", function () {
-    navbar.classList.toggle("active");
-    overlay.classList.toggle("active");
+backdrop.addEventListener('click', closeMobileNav);
+
+document.querySelectorAll('[data-nav-link]').forEach((link) => {
+  link.addEventListener('click', closeMobileNav);
+});
+
+window.addEventListener('scroll', () => {
+  const isScrolled = window.scrollY >= 80;
+  header.classList.toggle('scrolled', isScrolled);
+  backTopButton.classList.toggle('active', isScrolled);
+});
+
+document.querySelectorAll('.trip-tab').forEach((tab) => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.trip-tab').forEach((item) => item.classList.remove('active'));
+    tab.classList.add('active');
   });
-}
+});
 
-for (let i = 0; i < navLinks.length; i++) {
-  navLinks[i].addEventListener("click", function () {
-    navbar.classList.remove("active");
-    overlay.classList.remove("active");
-  });
-}
-
-
-
-/**
- * header
- */
-
-const header = document.querySelector("[data-header]");
-const backTopBtn = document.querySelector("[data-back-top-btn]");
-
-window.addEventListener("scroll", function () {
-  if (window.scrollY >= 100) {
-    header.classList.add("active");
-    backTopBtn.classList.add("active");
-  } else {
-    header.classList.remove("active");
-    backTopBtn.classList.remove("active");
+bookingForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  if (!bookingForm.checkValidity()) {
+    bookingForm.reportValidity();
+    return;
   }
+  bookingForm.hidden = true;
+  successMessage.classList.add('visible');
 });
